@@ -15,10 +15,10 @@
     <nav>
         <ul class="nav nav-pills">
             <li class="nav-item">
-                <a class="nav-link active" href="C:\Users\Josep\OneDrive\Documents\School\Coding Dojo\Projects and Algorithms\project-open-mam\openmam\mamdash\templates\dashboard.html">Dashboard</a>
+                <a class="nav-link active" href="dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="C:\Users\Josep\OneDrive\Documents\School\Coding Dojo\Projects and Algorithms\project-open-mam\openmam\mamdash\templates\home.html">Logout</a>
+                <a class="nav-link" href="logout">Logout</a>
             </li>
         </ul>
     </nav>
@@ -29,19 +29,24 @@
             <th>Admin</th>
             <th></th>
         </tr>
+        {% for user in users %}
         <tr>
-            <th>Test Name</th>
-            <th>test@test.test</th>
+            <th>{{ user.first_name }} {{ user.last_name }}</th>
+            <th>{{ user.email }}</th>
             <th>
                 <div class="form-check form-switch">
+                    {% if user.admin is True %}
+                    <input class="form-check-input" type="checkbox" id="adminaccess" checked>
+                    {% else %}
                     <input class="form-check-input" type="checkbox" id="adminaccess">
+                    {% endif %}
                 </div>
             </th>
             <th>
-                <input type="checkbox" class="btn-check" id="deleteuser" autocomplete="off">
-                <label class="btn btn-primary" for="deleteuser">Delete</label>
+                <a class="active" href="deleteuser/{{user.id}}">Delete</a>
             </th>
         </tr>
+        {% endfor %}
     </table>
 </body>
 </html>

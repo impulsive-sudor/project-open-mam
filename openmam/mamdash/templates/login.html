@@ -13,8 +13,16 @@
 </head>
 <body class="p-4 mb-2 bg-dark text-white">
     <h1>Login</h1>
+    {% if messages %}
+        <ul class="messages">    
+            {% for message in messages %}    
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>    
+            {% endfor %}
+        </ul>
+    {% endif %}
     <div>
-        <form class="row g-3" action="C:\Users\Josep\OneDrive\Documents\School\Coding Dojo\Projects and Algorithms\project-open-mam\openmam\mamdash\templates\dashboard.html" method="post">
+        <form class="row g-3" action="/trylogin" method="post">
+            {% csrf_token %}
             <div class="col-12">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" name="email" id="email">

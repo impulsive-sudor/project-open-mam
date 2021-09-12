@@ -13,15 +13,23 @@
 </head>
 <body class="p-4 mb-2 bg-dark text-white">
     <h1>Register</h1>
+    {% if messages %}
+        <ul class="messages">    
+            {% for message in messages %}    
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>    
+            {% endfor %}
+        </ul>
+    {% endif %}
     <div>
-        <form class="row g-3" action="C:\Users\Josep\OneDrive\Documents\School\Coding Dojo\Projects and Algorithms\project-open-mam\openmam\mamdash\templates\dashboard.html" method="post">
+        <form class="row g-3" action="/registration" method="post">
+            {% csrf_token %}
             <div class="col-md-6">
-                <label for="fname" class="form-label">First Name</label>
-                <input type="text" class="form-control" name="fname" id="fname">
+                <label for="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" name="first_name" id="first_name">
             </div>
             <div class="col-md-6">
-                <label for="lname" class="form-label">Last Name</label>
-                <input type="text" class="form-control" name="lname" id="lname">
+                <label for="last_name" class="form-label">Last Name</label>
+                <input type="text" class="form-control" name="last_name" id="last_name">
             </div>
             <div class="col-12">
                 <label for="email" class="form-label" >Email</label>
@@ -30,10 +38,6 @@
             <div class="col-md-6">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" name="password" id="password">
-            </div>
-            <div class="col-md-6">
-                <label for="cpassword" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" name="cpassword" id="cpassword">
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-light">Sign Up</button>
