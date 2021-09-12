@@ -3,6 +3,11 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Video, User
 import bcrypt
+import os
+
+
+from .forms import UploadFileForm
+
 
 def home(request):
     return render(request, 'home.html')
@@ -14,7 +19,13 @@ def login(request):
     return render(request, 'login.html')
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    if "user_id" not in request.session:
+        return redirect('/')
+    else:
+        context = {
+            'videos': Video.objects.all()
+        }
+        return render(request, 'dashboard.html', context)
 
 def registration(request):
     errors = User.objects.basic_validator(request.POST)
@@ -43,6 +54,7 @@ def trylogin(request):
         logged_user = user[0] 
         if bcrypt.checkpw(request.POST['password'].encode(), logged_user.password.encode()):
             request.session['user_id'] = logged_user.id
+            request.session['admin'] = logged_user.admin
             return redirect('/dashboard')
     return redirect("/login")
 
@@ -64,6 +76,7 @@ def deleteuser(request, user_id):
 def deletevideo(request, video_id):
     video = Video.objects.get(id=video_id)
     video.delete()
+    # os.remove(video.filepath.path)
 
     return redirect('/dashboard')
 
@@ -81,6 +94,24 @@ def unfavoritevideo(request, video_id):
 
     return redirect('/dashboard')
 
+def edit_video(request, video_id):
+    if "user_id" not in request.session:
+        return redirect('/')
+    else:
+        context = {
+            'video': Video.objects.get(id=video_id),
+            'user': User.objects.get(id=request.session['user_id'])
+        }
+        return render(request, "edit_video.html", context)
+
+def update_video(request, video_id):
+    video = Video.objects.get(id=video_id)
+    video.details = request.POST['details']
+    video.title = request.POST['title']
+    video.save()
+
+    return redirect('/dashboard')
+
 def adminonly(request, video_id):
     video = Video.objects.get(id=video_id)
     video.restricted = request.POST['adminaccess']
@@ -93,14 +124,15 @@ def logout(request):
 
     return redirect('/')
 
-# def upload_file(request):
-#     if request.method == 'POST':
-#         form = UploadFileForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             instance = Video(file=request.FILES['file'])
-#             instance.save()
-#             return HttpResponseRedirect('/dashboard.html')
-#     else:
-#         form = UploadFileForm()
-#     return render(request, 'dashboard.html')
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = User.objects.get(id=request.session["user_id"])
+            instance = Video(filepath=request.FILES['file'],uploaded_by=user,title=request.POST['title'])
+            instance.save()
+            return redirect('/dashboard')
+    else:
+        form = UploadFileForm()
+    return render(request, 'upload.html', {'form': form})
 

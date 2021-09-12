@@ -1,5 +1,8 @@
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 import re
+
+fs = FileSystemStorage(location='/media/videos')
 
 class Loginmanager(models.Manager):
     def basic_validator(self, postData):
@@ -30,7 +33,10 @@ class User(models.Model):
 
 class Video(models.Model):
     title = models.CharField(max_length=255)
+    # not sure how file path works vs file field
     file = models.FilePathField(path="/videos", match="*.mp4", recursive=True)
+    file2 = models.FileField(storage=fs, default="none")
+    filepath = models.FileField(default="none")
     details = models.TextField(default="some text")
     restricted = models.BooleanField(default=True)
     uploaded_by = models.ForeignKey(User, related_name='uploaded_video', on_delete=models.CASCADE)
